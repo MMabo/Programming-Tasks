@@ -1,6 +1,5 @@
 string = input()
 arr = []
-temp = []
 indices = []
 
 for i in range(len(string)):
@@ -10,30 +9,14 @@ for i in range(len(string)):
 
     arr.append(string[i])
 
-for i in range(len(arr)):
-    
+for i in range(len(arr))
     arr[i] = arr[i].lower()
-    arr = sorted(arr)
+    
+arr = sorted(arr)
 
-print(arr)
-for i in range(len(indices)):
+for i in indices:
+    index = arr.index(i[0].lower())
+    arr[index] = arr[index].upper()
+    
 
-    arr[indices[i][1]] = arr[indices[i][1]].upper()
-
-print(arr)
-##print(indices)
-##print(arr)
-##print(temp)
-
-##for char in arr:
-##    print(char)
-##    result.append(char.lower())
-##    
-##print(arr)
-##print(result)
-##
-##result = sorted(result)
-##
-##for char in result:
-##    if char.upper() in arr:
-##        result.replace()
+print(''.join(arr))
