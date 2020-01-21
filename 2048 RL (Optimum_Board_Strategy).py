@@ -2,8 +2,8 @@
 # Rundong Li, UESTC
 
 # The 'Optimum Board' Strategy:
-# This AI copies the board n times and then board makes a random move simultaneously. The boards with the highest score
-# are selected, the rest are disposed and each board of the new selection makes a random move. This continues
+# This AI copies the board n times and then each board makes a random move simultaneously. The boards with the highest
+# score are selected, the rest are disposed and each board of the new selection makes a random move. This continues
 # until there is only one optimum board left.
 # If the all boards produce the same random move, all boards make another random move.
 
@@ -121,6 +121,7 @@ class Board:
         self.max_score = 0  # max([block.score for block in self.blocks])
         self.next_direction = Direction.Up
         self.max_block = 0
+        self.init_move = ''
 
     def handle_block_slide(self, direction):
         self.next_direction = direction
@@ -235,7 +236,7 @@ class Board:
 
     # def handle_scores()
 # NEW CODE
-def make_runs(grids):
+def make_runs(round_number, grids):
         runs = []
         best_score = 0
         best_move = ''
@@ -255,15 +256,21 @@ def make_runs(grids):
                 slide_direction = Direction.Down
                 grid.slide(slide_direction)
 
+            if round_number == 1:
+                grid.init_move = key
             current_score = grid.get_max_score()
-            if current_score > best_score:
+            if current_score == best_score:
                 best_score = current_score
                 best_move = key
                 runs.append(grid)
+            elif current_score > best_score:
+                runs.clear()
+                best_score = current_score
+                runs.append(grid)
 
             max_block = grid.get_max_block()
-
-        return best_move, best_score, runs
+        print('grids left:',len(runs))
+        return runs
 
 def get_average_score_for_runs(runs):
     total = 0
@@ -307,7 +314,7 @@ def get_best_move_for_runs(runs):
 
 def get_best_move(original_board):
         state = original_board.current_state()
-        number_of_runs = 500
+        number_of_runs = 1000
         round_number = 1
         grids = []
         runs = []
@@ -317,6 +324,12 @@ def get_best_move(original_board):
         init_move = ''
         best_move_found = False
         while not best_move_found:
+            for event in pygame.event.get():  # event handling loop
+                if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
+                    pygame.quit()
+                    sys.exit()
+            print(round_number)
+            print(grids)
             # if round_number == 1:
             #     for grid in grids:
             #         current_run = run(grid)
@@ -326,16 +339,16 @@ def get_best_move(original_board):
             #         current_run = run(grid)
             #
             #         runs.append(current_run)
-            if round_number == 1:
-                init_move, best_score, grids = make_runs(grids)
-            else:
-                best_move, best_score, grids = make_runs(grids)
-                if len(grids) == 1:
-                    selected_move = init_move
-                    best_move_found = True
+            grids = make_runs(round_number, grids)
+            if len(grids) == 1:
+                selected_move = grids[0].init_move
+                best_move_found = True
+        # else:
+        # for board in grids:
+        # print(Board.current_state(board))
 
             round_number += 1
-
+        print(selected_move)
         return selected_move
 
 
